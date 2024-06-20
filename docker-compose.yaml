@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mysql:8.0.30-debian
+    container_name: book_library_manager_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: book_library_manager
+    ports:
+      - 3306:3306
+    volumes:
+      - ./_docker/mysql/data:/var/lib/mysql
+    networks:
+      - book_library_manager
+  app:
+    command: tcp db:3306 -t 30s -i 250ms
+    container_name: book_library_manager_app
+    build: .
+    volumes:
+      - .:/var/www/html
+    ports:
+      - 9000:80
+    depends_on:
+      - db
+    networks:
+      - book_library_manager
+networks:
+  book_library_manager:
